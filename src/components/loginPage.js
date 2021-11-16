@@ -77,7 +77,7 @@ const LoginPage = (props) => {
             </Box>
 
             <Stack spacing={2} direction="column">
-                <Button variant="text" onClick={handleLogin} disabled={!errorEmail && !errorPassword}>LOGIN</Button>
+                <Button variant="text" onClick={handleLogin} >LOGIN</Button>
                 <Button variant="text"> <Link to="/regitration">REGISTRATION </Link></Button>
             </Stack>
 

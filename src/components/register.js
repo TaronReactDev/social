@@ -54,7 +54,7 @@ const Register = (props) => {
             }
             try {
                 const registration = await axios.post(`/api/user/registration`, registrationInfo);
-                console.log(registration)
+              alert(registration.data.message)
 
             } catch (e) {
                 console.log(e)
