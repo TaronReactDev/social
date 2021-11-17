@@ -6,6 +6,8 @@ import Button from '@mui/material/Button';
 import {Link} from "react-router-dom"
 import axios from "axios";
 import {validation} from "./validation/validationFunction";
+import {Redirect} from "react-router-dom";
+import * as path from "path";
 
 const LoginPage = (props) => {
 
@@ -14,6 +16,8 @@ const LoginPage = (props) => {
 
     const [errorEmail, setErrorEmail] = useState(false)
     const [errorPassword, setErrorPassword] = useState(false)
+
+    const [homePage, setHomePage] = useState(false)
 
     const handleChangeLogin = (type) => (e) => {
         switch (type) {
@@ -39,47 +43,69 @@ const LoginPage = (props) => {
         }
         try {
             const login = await axios.post(`/api/user/login`, LoginInfo)
-            console.log(login)
+            if(login.data){
+            window.localStorage.setItem("auth", login.data)
+                setHomePage(true);
+
+            }
+
         } catch (e) {
             console.log(e)
         }
     }
 
+
+
+
+    const handleGetData = async () => {
+        const auth = window.localStorage.getItem("auth");
+        const post = await axios.get(`/api/user/some`, {
+            headers: {
+                'Authorization': `Bearer ${auth}`
+            }
+        } )
+
+
+
+    }
+
     const handleLoginToRegistration = () => {
     }
 
-    return (
-        <>
-            <Box
-                component="form"
-                sx={{
-                    '& .MuiTextField-root': {m: 1, width: '25ch'},
-                }}
-                noValidate
-                autoComplete="off"
+    return (<>
+        { homePage ?  <Button variant="text" onClick={handleGetData} >Get Data</Button>
+                :
+                <>
+                <Box
+                    component="form"
+                    sx={{
+                        '& .MuiTextField-root': {m: 1, width: '25ch'},
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+                    <div style={{display: "flex", alignItems: "center", flexDirection: "column"}}>
 
+                        <TextField error={errorEmail} label="Email" variant="standard" value={email}
+                                   onChange={handleChangeLogin("email")}/>
 
-            >
-                <div style={{display: "flex", alignItems: "center", flexDirection: "column"}}>
+                        <TextField
+                            error={errorPassword}
+                            label="Password"
+                            type="password"
+                            variant="standard"
+                            value={password} onChange={handleChangeLogin("password")}
+                        />
+                    </div>
 
-                    <TextField error={errorEmail} label="Email" variant="standard" value={email}
-                               onChange={handleChangeLogin("email")}/>
+                </Box>
 
-                    <TextField
-                        error={errorPassword}
-                        label="Password"
-                        type="password"
-                        variant="standard"
-                        value={password} onChange={handleChangeLogin("password")}
-                    />
-                </div>
+                <Stack spacing={2} direction="column">
+                    <Button variant="text" onClick={handleLogin} >LOGIN</Button>
+                    <Button variant="text"> <Link to="/regitration">REGISTRATION </Link></Button>
+                </Stack>
 
-            </Box>
-
-            <Stack spacing={2} direction="column">
-                <Button variant="text" onClick={handleLogin} >LOGIN</Button>
-                <Button variant="text"> <Link to="/regitration">REGISTRATION </Link></Button>
-            </Stack>
+            </> }
 
         </>
     );
